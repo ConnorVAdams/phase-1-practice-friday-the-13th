@@ -1,7 +1,3 @@
-// ! Update number of blood drops when users adds to associated form
-
-// ! Persist information about blood drops
-
 // ! Variables
 const MOVIESURL = 'http://localhost:3000/movies';
 
@@ -15,25 +11,36 @@ const movieInfoDiv = document.querySelector('#movie-info');
     const watchedBtn = document.querySelector('#watched');
     const bloodAmount = document.querySelector('#amount');
 
-const bloodForm = document.querySelector('#form');
-    const amountInput = document.querySelector('#blood-amount');
-    const addBloodBtn = document.querySelector('form:nth-child(3)');
-
-let movieDisplayed = false;
+const bloodForm = document.querySelector('#blood-form');
+    const addBloodBtn = document.querySelector('#blood-form > input[type=submit]:nth-child(3)');
+    const inputBlood = document.querySelector('#blood-amount');
 
 // ! CRUD functions
 // ! GET all moviesObj to populate nav bar on page load
 const fetchAllMovies = () => {
     return fetch(MOVIESURL)
-    .then(resp => resp.json())
+    .then(resp => {
+        if (!resp.ok) {
+            throw resp;
+        } else {
+            return resp.json()
+        }})
+        .catch(error => alert('Failed to fetch data.'))
 };
 
 // ! GET a movieObj to populate the window
 //Fire on first movie on page load 
 const fetchOneMovie = (selectedMovieId) => {
     return fetch(`${MOVIESURL}/${selectedMovieId}`)
-    .then(resp => resp.json())
+    .then(resp => {
+        if (!resp.ok) {
+            throw resp;
+        } else {
+            return resp.json();
+        }})
+        .catch(error => alert('Failed to fetch data.'))
 };
+
 // ! Toggle watched and unwatched
 //PATCH watched depending on which value is passed in
 const patchMovieWatched = (e) => {
@@ -45,7 +52,14 @@ const patchMovieWatched = (e) => {
         },
         body: JSON.stringify({watched: bool})
     })
-    .then(resp => resp.json())
+    .then(resp => {
+        if (!resp.ok) {
+            throw resp;
+        } else {
+        return resp.json()
+        }
+    })
+    .catch(error => alert('Failed to fetch data.'))
     .then(() => toggleWatched())
 };
 
@@ -58,25 +72,47 @@ watchedBtn.addEventListener('click', patchMovieWatched)
 // ! Update blood count
 //PATCH watched depending on which value is passed in
 const patchBloodCount = (e) => {
-    const currentBlood = 
-    fetch(`${MOVIESURL}/${e.target.dataset.id}`, {
+    const inputAmount = handleSubmit(e)
+    const newAmount = parseInt(bloodAmount.textContent) + inputAmount;
+    fetch(`${MOVIESURL}/${bloodAmount.dataset.id}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({watched: bool})
+        body: JSON.stringify({'blood_amount': newAmount})
     })
-    .then(resp => resp.json())
-    .then(() => toggleWatched())
+    .then(resp => {
+        if (!resp.ok) {
+            throw resp;
+        } else {
+            return resp.json()
+        }
+    })
+    .catch(error => alert('Failed to fetch data.'))
+    .then(() => updateBlood())
 };
 
-const toggleWatched = () => {
-    watchedBtn.textContent = watchedBtn.textContent === 'unwatched' ? 'watched' : 'unwatched';
+// ! Define handleSubmit
+const handleSubmit = (e) => {
+    e.preventDefault();
+    const userInput = parseInt(inputBlood.value);
+    if (isNaN(userInput)) {
+        alert('Please only enter numbers.')
+    } else {
+        bloodForm.reset();
+        return userInput;
+    }
 };
 
-watchedBtn.addEventListener('click', patchMovieWatched)
+// ! Define updateBlood
+const updateBlood = () => {
+    fetchOneMovie(bloodAmount.dataset.id)
+    .then(movieObj => bloodAmount.textContent = movieObj['blood_amount'])
+};
 
-// ! Define populateNavBar
+bloodForm.addEventListener('submit', patchBloodCount);
+
+// ! Populate and render functions
 const populateNavBar = () => {
     fetchAllMovies()
     .then(moviesObj => renderMovieNavs(moviesObj))
@@ -97,8 +133,6 @@ const renderMovieNavs = (moviesObj) => {
     moviesObj.forEach(createMovieNav);
 };
 
-document.addEventListener('DOMContentLoaded', populateNavBar)
-
 // ! Define displayMovie
 const displayMovieFromNav = (e) => {
     fetchOneMovie(e.target.dataset.id)
@@ -117,3 +151,5 @@ const renderMovie = (movieObj) => {
     bloodAmount.textContent = movieObj['blood_amount'];
     bloodAmount.setAttribute('data-id', movieObj.id)
 };
+
+document.addEventListener('DOMContentLoaded', populateNavBar);
