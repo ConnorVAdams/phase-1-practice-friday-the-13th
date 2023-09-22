@@ -95,7 +95,7 @@ const patchBloodCount = (e) => {
 // ! Define handleSubmit
 const handleSubmit = (e) => {
     e.preventDefault();
-    const userInput = parseInt(inputBlood.value);
+    const userInput = parseInt(inputBlood.value.replace(',', ''));
     if (isNaN(userInput)) {
         alert('Please only enter numbers.')
     } else {
