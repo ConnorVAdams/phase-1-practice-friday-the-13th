@@ -1,4 +1,4 @@
-// ! Populate nav bar with all movies on page load
+// Populate nav bar with all movies on page load
 
 // ! Load first movie in list to window on page load
 
@@ -29,6 +29,8 @@ const bloodForm = document.querySelector('#form');
     const amountInput = document.querySelector('#blood-amount');
     const addBloodBtn = document.querySelector('form:nth-child(3)');
 
+let movieDisplayed = false;
+
 // ! CRUD functions
 //GET all moviesObj to populate nav bar on page load
 const fetchAllMovies = () => {
@@ -57,3 +59,46 @@ const patchOneMovie = (selectedMovieId, propertyToBePatched, newValue) => {
     .then(resp => resp.json())
 };
 
+// ! Define populateNavBar
+const populateNavBar = () => {
+    fetchAllMovies()
+    .then(moviesObj => renderMovieNavs(moviesObj))
+};
+
+const createMovieNav = (movieObj) => {
+    const movieNav = document.createElement('img');
+    movieNav.src = movieObj.image;
+    movieNav.alt = movieObj.title;
+    movieNav.setAttribute('data-id', movieObj.id);
+    movieNav.addEventListener('click', displayMovie)
+    movieListNav.appendChild(movieNav)
+
+};
+
+const renderMovieNavs = (moviesObj) => {
+    moviesObj.forEach(createMovieNav);
+};
+
+document.addEventListener('DOMContentLoaded', populateNavBar)
+
+// ! Define displayMovie
+const displayMovie = (e) => {
+    return fetchOneMovie(e.target.dataset.id)
+    .then(movieObj => {
+        movieInfoImg.src = movieObj.image;
+        movieInfoImg.alt = movieObj.title;
+        movieInfoTitle.textContent = movieObj.title;
+        movieInfoYear.textContent = movieObj['release_year'];
+        movieInfoDesc.textContent = movieObj.description;
+        watchedBtn.textContent = (movieObj.watched ? 'watched' : 'unwatched');
+        bloodAmount.textContent = movieObj['blood_amount'];
+    })
+};
+
+// const isWatched = (selectedMovieId) => {
+//     return fetchOneMovie(selectedMovieId)
+//     .then(movieObj => !movieObj.watched)
+//     .then(bool => bool ? 'watched' : 'unwatched')
+// };
+
+// document.addEventListener('DOMContentLoaded', displayMovie())
