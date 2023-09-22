@@ -3,13 +3,12 @@ const MOVIESURL = 'http://localhost:3000/movies';
 
 const movieListNav = document.querySelector('#movie-list');
 
-const movieInfoDiv = document.querySelector('#movie-info');
-    const movieInfoImg = document.querySelector('#detail-image');
-    const movieInfoTitle = document.querySelector('#title');
-    const movieInfoYear = document.querySelector('#year-released');
-    const movieInfoDesc = document.querySelector('#description');
-    const watchedBtn = document.querySelector('#watched');
-    const bloodAmount = document.querySelector('#amount');
+const movieInfoImg = document.querySelector('#detail-image');
+const movieInfoTitle = document.querySelector('#title');
+const movieInfoYear = document.querySelector('#year-released');
+const movieInfoDesc = document.querySelector('#description');
+const watchedBtn = document.querySelector('#watched');
+const bloodAmount = document.querySelector('#amount');
 
 const bloodForm = document.querySelector('#blood-form');
     const addBloodBtn = document.querySelector('#blood-form > input[type=submit]:nth-child(3)');
@@ -72,14 +71,14 @@ watchedBtn.addEventListener('click', patchMovieWatched)
 // ! Update blood count
 //PATCH watched depending on which value is passed in
 const patchBloodCount = (e) => {
-    const inputAmount = handleSubmit(e)
-    const newAmount = parseInt(bloodAmount.textContent) + inputAmount;
+    const patchAmount = handleSubmit(e)
+    if (patchAmount) {
     fetch(`${MOVIESURL}/${bloodAmount.dataset.id}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({'blood_amount': newAmount})
+        body: JSON.stringify({'blood_amount': patchAmount})
     })
     .then(resp => {
         if (!resp.ok) {
@@ -90,17 +89,20 @@ const patchBloodCount = (e) => {
     })
     .catch(error => alert('Failed to fetch data.'))
     .then(() => updateBlood())
+    } else {
+        alert('Please only enter numbers.');
+    }
 };
 
 // ! Define handleSubmit
 const handleSubmit = (e) => {
     e.preventDefault();
-    const userInput = parseInt(inputBlood.value.replace(',', ''));
-    if (isNaN(userInput)) {
-        alert('Please only enter numbers.')
+    const newAmount = (parseInt((inputBlood.value.replace(',', ''))) + (parseInt(bloodAmount.textContent)));
+    if (isNaN(newAmount)) {
+        return;
     } else {
         bloodForm.reset();
-        return userInput;
+        return newAmount;
     }
 };
 
