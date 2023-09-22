@@ -63,6 +63,8 @@ const patchOneMovie = (selectedMovieId, propertyToBePatched, newValue) => {
 const populateNavBar = () => {
     fetchAllMovies()
     .then(moviesObj => renderMovieNavs(moviesObj))
+    .then(() => fetchOneMovie(1))
+    .then(fetchedMovie => renderMovie(fetchedMovie))
 };
 
 const createMovieNav = (movieObj) => {
@@ -70,9 +72,8 @@ const createMovieNav = (movieObj) => {
     movieNav.src = movieObj.image;
     movieNav.alt = movieObj.title;
     movieNav.setAttribute('data-id', movieObj.id);
-    movieNav.addEventListener('click', displayMovie)
+    movieNav.addEventListener('click', displayMovieFromNav)
     movieListNav.appendChild(movieNav)
-
 };
 
 const renderMovieNavs = (moviesObj) => {
@@ -82,23 +83,18 @@ const renderMovieNavs = (moviesObj) => {
 document.addEventListener('DOMContentLoaded', populateNavBar)
 
 // ! Define displayMovie
-const displayMovie = (e) => {
-    return fetchOneMovie(e.target.dataset.id)
-    .then(movieObj => {
-        movieInfoImg.src = movieObj.image;
-        movieInfoImg.alt = movieObj.title;
-        movieInfoTitle.textContent = movieObj.title;
-        movieInfoYear.textContent = movieObj['release_year'];
-        movieInfoDesc.textContent = movieObj.description;
-        watchedBtn.textContent = (movieObj.watched ? 'watched' : 'unwatched');
-        bloodAmount.textContent = movieObj['blood_amount'];
-    })
+const displayMovieFromNav = (e) => {
+    fetchOneMovie(e.target.dataset.id)
+    .then(movieObj => renderMovie(movieObj))
 };
 
-// const isWatched = (selectedMovieId) => {
-//     return fetchOneMovie(selectedMovieId)
-//     .then(movieObj => !movieObj.watched)
-//     .then(bool => bool ? 'watched' : 'unwatched')
-// };
-
-// document.addEventListener('DOMContentLoaded', displayMovie())
+// ! Define renderMovie
+const renderMovie = (movieObj) => {
+    movieInfoImg.src = movieObj.image;
+    movieInfoImg.alt = movieObj.title;
+    movieInfoTitle.textContent = movieObj.title;
+    movieInfoYear.textContent = movieObj['release_year'];
+    movieInfoDesc.textContent = movieObj.description;
+    watchedBtn.textContent = (movieObj.watched ? 'watched' : 'unwatched');
+    bloodAmount.textContent = movieObj['blood_amount'];
+};
