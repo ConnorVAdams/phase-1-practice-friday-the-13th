@@ -1,13 +1,3 @@
-// Populate nav bar with all movies on page load
-
-// ! Load first movie in list to window on page load
-
-// ! Populate window with relevant info when a movie in nav bar is clicked
-
-// ! Button content changes from watched/unwatched
-
-// ! Persist information about watched/unwatched
-
 // ! Update number of blood drops when users adds to associated form
 
 // ! Persist information about blood drops
@@ -32,22 +22,21 @@ const bloodForm = document.querySelector('#form');
 let movieDisplayed = false;
 
 // ! CRUD functions
-//GET all moviesObj to populate nav bar on page load
+// ! GET all moviesObj to populate nav bar on page load
 const fetchAllMovies = () => {
     return fetch(MOVIESURL)
     .then(resp => resp.json())
 };
 
-//GET a movieObj to populate the window
+// ! GET a movieObj to populate the window
 //Fire on first movie on page load 
 const fetchOneMovie = (selectedMovieId) => {
     return fetch(`${MOVIESURL}/${selectedMovieId}`)
     .then(resp => resp.json())
 };
-
-//PATCH blood_amount and watched depending on which value is passed in
+// ! Toggle watched and unwatched
+//PATCH watched depending on which value is passed in
 const patchMovieWatched = (e) => {
-    debugger
     const bool = (watchedBtn.textContent === 'watched' ? false : true)
     fetch(`${MOVIESURL}/${e.target.dataset.id}`, {
         method: 'PATCH',
@@ -57,6 +46,32 @@ const patchMovieWatched = (e) => {
         body: JSON.stringify({watched: bool})
     })
     .then(resp => resp.json())
+    .then(() => toggleWatched())
+};
+
+const toggleWatched = () => {
+    watchedBtn.textContent = watchedBtn.textContent === 'unwatched' ? 'watched' : 'unwatched';
+};
+
+watchedBtn.addEventListener('click', patchMovieWatched)
+
+// ! Update blood count
+//PATCH watched depending on which value is passed in
+const patchBloodCount = (e) => {
+    const currentBlood = 
+    fetch(`${MOVIESURL}/${e.target.dataset.id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({watched: bool})
+    })
+    .then(resp => resp.json())
+    .then(() => toggleWatched())
+};
+
+const toggleWatched = () => {
+    watchedBtn.textContent = watchedBtn.textContent === 'unwatched' ? 'watched' : 'unwatched';
 };
 
 watchedBtn.addEventListener('click', patchMovieWatched)
@@ -102,9 +117,3 @@ const renderMovie = (movieObj) => {
     bloodAmount.textContent = movieObj['blood_amount'];
     bloodAmount.setAttribute('data-id', movieObj.id)
 };
-
-// const changeWatchedBtn = (selectedMovieId) => {
-//     const newValue = (watchedBtn.textContent === 'watched' ? )
-//     patchOneMovie(selectedMovieId, 'watched', '')
-//     .then(movieObj => watchedBtn.textContent = (movieObj.watched ? 'watched' : 'unwatched');)
-// }
