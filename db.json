@@ -51,7 +51,7 @@
       "release_year": 1986,
       "description": "Determined to finish off the infamous killer Jason Voorhees once and for all, Tommy Jarvis and a friend exhume Jason’s corpse in order to cremate him. Things go awry when Jason is instead resurrected, sparking a new chain of ruthlessly brutal murders. Now it’s up to Tommy to stop the dark, devious and demented deaths that he unwittingly brought about.",
       "image": "./assets/f13-jasonlives.jpeg",
-      "watched": false,
+      "watched": true,
       "blood_amount": 0
     },
     {
@@ -60,7 +60,7 @@
       "release_year": 1988,
       "description": "A young girl who possesses the power of telekinesis accidentally causes her father's death after a family dispute at Crystal Lake. Years later, when a doctor tries to exploit her abilities, her power becomes a hellish curse, and she unwittingly unchains the merciless, bloodthirsty Jason Voorhees from his watery grave.",
       "image": "./assets/f13-newblood.jpeg",
-      "watched": false,
+      "watched": true,
       "blood_amount": 0
     },
     {

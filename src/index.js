@@ -46,18 +46,20 @@ const fetchOneMovie = (selectedMovieId) => {
 };
 
 //PATCH blood_amount and watched depending on which value is passed in
-const patchOneMovie = (selectedMovieId, propertyToBePatched, newValue) => {
-    const patchData = {};
-    patchData[propertyToBePatched] = newValue;
-    fetch(`${MOVIESURL}/${selectedMovieId}`, {
+const patchMovieWatched = (e) => {
+    debugger
+    const bool = (watchedBtn.textContent === 'watched' ? false : true)
+    fetch(`${MOVIESURL}/${e.target.dataset.id}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(patchData)
+        body: JSON.stringify({watched: bool})
     })
     .then(resp => resp.json())
 };
+
+watchedBtn.addEventListener('click', patchMovieWatched)
 
 // ! Define populateNavBar
 const populateNavBar = () => {
@@ -96,5 +98,13 @@ const renderMovie = (movieObj) => {
     movieInfoYear.textContent = movieObj['release_year'];
     movieInfoDesc.textContent = movieObj.description;
     watchedBtn.textContent = (movieObj.watched ? 'watched' : 'unwatched');
+    watchedBtn.setAttribute('data-id', movieObj.id)
     bloodAmount.textContent = movieObj['blood_amount'];
+    bloodAmount.setAttribute('data-id', movieObj.id)
 };
+
+// const changeWatchedBtn = (selectedMovieId) => {
+//     const newValue = (watchedBtn.textContent === 'watched' ? )
+//     patchOneMovie(selectedMovieId, 'watched', '')
+//     .then(movieObj => watchedBtn.textContent = (movieObj.watched ? 'watched' : 'unwatched');)
+// }
